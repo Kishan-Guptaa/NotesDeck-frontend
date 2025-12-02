@@ -21,6 +21,7 @@ export function Hero() {
 
     
       <div className=""> 
+        
         <h1 className="text-5xl md:text-6xl font-extrabold font-serif">
           <TypeAnimation
             sequence={[

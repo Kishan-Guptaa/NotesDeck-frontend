@@ -9,8 +9,8 @@ export function Footer() {
                     className="relative p-8 md:p-12 lg:p-16 
                         bg-white dark:bg-gray-950 
                         border-6 border-black dark:border-white 
-                        rounded-2xl 
-                        shadow-[10px_10px_0_0_#000000] dark:shadow-[12px_12px_0_0_#374151]
+                        rounded-md 
+                        shadow-[8px_8px_0_0_#000000] dark:shadow-[8px_8px_0_0_#374151]
                         flex flex-col gap-10">
                     <div className="grid grid-cols-1 md:grid-cols-3  lg:grid-cols-4 gap-8 md:gap-12 pb-8 border-b border-black dark:border-white">
                         <div className="col-span-1 md:col-span-1 lg:col-span-2 flex flex-col ">
