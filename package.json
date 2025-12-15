@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@notionhq/client": "^1.0.4",
     "@prisma/client": "^5.15.0",
     "@prisma/extension-accelerate": "^3.0.0",
     "@radix-ui/react-slot": "^1.2.4",

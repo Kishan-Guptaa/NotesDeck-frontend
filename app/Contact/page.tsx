@@ -4,13 +4,13 @@ import Image from "next/image";
 import React from "react";
 import { motion } from "framer-motion";
 import { FaInstagram, FaFacebook, FaTwitter, FaLinkedinIn } from "react-icons/fa";
-
+import Link from "next/link";
 /* ---------------------- SOCIAL LINKS ---------------------- */
 const socialLinks = [
-  { Icon: FaInstagram, href: "YOUR_INSTAGRAM_URL", label: "Instagram" },
-  { Icon: FaTwitter, href: "YOUR_TWITTER_URL", label: "Twitter" },
+  { Icon: FaInstagram, href: "https://www.instagram.com/kishan_n_09/", label: "Instagram" },
+  { Icon: FaTwitter, href: "https://x.com/T2_c0de", label: "Twitter" },
   { Icon: FaFacebook, href: "YOUR_FACEBOOK_URL", label: "Facebook" },
-  { Icon: FaLinkedinIn, href: "YOUR_LINKEDIN_URL", label: "LinkedIn" },
+  { Icon: FaLinkedinIn, href: "https://www.linkedin.com/in/kishangupta09", label: "LinkedIn" },
 ] as const;
 
 /* ---------------------- TOAST COMPONENT ---------------------- */
@@ -41,7 +41,21 @@ export default function Contact() {
 
   return (
     <div className="relative min-h-screen pt-32 pb-20 px-6 md:px-20 bg-white dark:bg-black text-black dark:text-white">
-
+       <Link
+        href="/"
+        className="
+          absolute top-20 left-4 sm:left-6
+          px-4 py-2 text-sm font-semibold
+          border-2 border-black dark:border-gray-300
+          rounded-md
+          shadow-[4px_4px_0_0_#000]
+          dark:shadow-[4px_4px_0_0_#374151]
+          hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] mt-10
+          transition
+        "
+      >
+        ← Back
+      </Link>
      
       <Image
         src="/contact1.svg"

@@ -27,3 +27,79 @@ model User {
   semester  Int?
   createdAt DateTime @default(now())
 }
+
+
+
+//---------------- STREAM ---------------- 
+model Stream {
+  id              Int              @id @default(autoincrement())
+  name            String
+  slug            String  @unique
+  specializations Specialization[]
+  subjects        Subject[]
+  notes           Note[]
+  createdAt       DateTime @default(now())
+}
+
+//--------------- SPECIALIZATIONS --------------- 
+model Specialization {
+  id        Int      @id @default(autoincrement())
+  name      String
+  slug      String   @unique
+  streamId  Int
+  stream    Stream   @relation(fields: [streamId], references: [id])
+  notes     Note[]
+  createdAt DateTime @default(now())
+}
+
+// ---------------- SUBJECTS ---------------- 
+model Subject {
+  id        Int      @id @default(autoincrement())
+  name      String
+  slug      String   @unique
+  streamId  Int
+  semester  Int
+  stream    Stream   @relation(fields: [streamId], references: [id])
+  notes     Note[]
+  createdAt DateTime @default(now())
+}
+
+// ---------------- NOTES ---------------- 
+model Note {
+  id               Int              @id @default(autoincrement())
+  title            String
+  year             Int
+  semester         Int
+  streamId         Int
+  subjectId        Int
+  specializationId Int?
+  published        Boolean @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  blocks           NoteBlock[]
+
+  stream           Stream @relation(fields: [streamId], references: [id])
+  subject          Subject @relation(fields: [subjectId], references: [id])
+  specialization   Specialization? @relation(fields: [specializationId], references: [id])
+}
+
+// ---------------- NOTE BLOCKS ---------------- 
+model NoteBlock {
+  id        Int      @id @default(autoincrement())
+  noteId    Int
+  type      BlockType
+  content   Json
+  order     Int
+  createdAt DateTime @default(now())
+
+  note      Note @relation(fields: [noteId], references: [id], onDelete: Cascade)
+}
+
+enum BlockType {
+  HEADING
+  PARAGRAPH
+  LIST
+  CODE
+  IMAGE
+  TABLE
+}
