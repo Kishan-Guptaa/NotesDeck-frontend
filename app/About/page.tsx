@@ -447,7 +447,7 @@ export default function About() {
           "
         >
           <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
-            NotesDeck began as a personal project by <strong>Kishan Gupta</strong>
+            NotesDeck began as a personal project by <strong className="underline text-black dark:text-white">Kishan Gupta </strong>
             to solve the problem of messy and unreliable study material.
             Today, it helps students learn smarter and faster.
           </p>

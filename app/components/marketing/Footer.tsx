@@ -166,7 +166,7 @@ export function Footer() {
                 Quick Links
               </h3>
               <ul className="space-y-3 text-gray-800 dark:text-gray-300">
-                {["/", "/Notes", "/About", "/Contact"].map((path, i) => {
+                {["/", "/notes", "/About", "/Contact"].map((path, i) => {
                   const labels = ["Home", "Notes", "About", "Contact"];
                   return (
                     <li key={i}>
@@ -220,10 +220,9 @@ export function Footer() {
             </div>
           </div>
 
-          {/* BOTTOM BAR */}
+         
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6">
 
-            {/* SOCIAL */}
             <div className="flex space-x-4">
               {[Facebook, Twitter, Linkedin, Instagram].map((Icon, i) => (
                 <Link
@@ -237,10 +236,14 @@ export function Footer() {
               ))}
             </div>
 
-            {/* COPYRIGHT */}
-            <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
-              © {new Date().getFullYear()} NotesDeck. All rights reserved.
-            </p>
+            
+           <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
+            © {new Date().getFullYear()} NotesDeck. All rights reserved.
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-500 text-center mt-1">
+            Built & maintained by <span className="font-semibold">Kishan Gupta</span>
+          </p>
+
           </div>
         </div>
       </div>

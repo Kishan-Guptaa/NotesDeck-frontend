@@ -206,6 +206,88 @@
 //     return NextResponse.json({ ok: false, error: err.message }, { status: 500 });
 //   }
 // }
+// import { NextResponse } from "next/server";
+// import { Client } from "@notionhq/client";
+
+// const notion = new Client({
+//   auth: process.env.NOTION_SECRET,
+// });
+
+// const getText = (rich: any[]) =>
+//   rich?.map((t) => t.plain_text).join("") || "";
+
+// const mapBlock = (block: any) => {
+//   const type = block.type;
+//   const data = block[type];
+//   const out: any = { id: block.id, type };
+
+//   if (data?.rich_text) {
+//     out.text = getText(data.rich_text);
+//   }
+
+//   return out;
+// };
+
+// // ✅ FETCH ALL BLOCKS (NO LIMIT)
+// async function fetchAllBlocks(blockId: string) {
+//   let allBlocks: any[] = [];
+//   let cursor: string | undefined = undefined;
+
+//   while (true) {
+//     const res = await notion.blocks.children.list({
+//       block_id: blockId,
+//       start_cursor: cursor,
+//       page_size: 100,
+//     });
+
+//     allBlocks.push(...res.results);
+
+//     if (!res.has_more) break;
+//     cursor = res.next_cursor ?? undefined;
+//   }
+
+//   return allBlocks;
+// }
+
+// export async function GET(
+//   req: Request,
+//   ctx: { params: Promise<{ unitId: string }> }
+// ) {
+//   try {
+//     // ✅ VERY IMPORTANT: unwrap params
+//     const { unitId } = await ctx.params;
+
+//     if (!unitId) {
+//       throw new Error("unitId missing in route params");
+//     }
+
+//     const page: any = await notion.pages.retrieve({
+//       page_id: unitId,
+//     });
+
+//     const rawBlocks = await fetchAllBlocks(unitId);
+//     const blocks = rawBlocks.map(mapBlock);
+
+//     return NextResponse.json({
+//       ok: true,
+//       data: {
+//         id: unitId,
+//         name:
+//           page.properties["Unit Name"]?.title?.[0]?.plain_text ||
+//           page.properties["Subject"]?.title?.[0]?.plain_text ||
+//           "Untitled",
+//         number: page.properties["Unit Number"]?.number || null,
+//         blocks,
+//       },
+//     });
+//   } catch (err: any) {
+//     console.error("UNIT API ERROR:", err);
+//     return NextResponse.json(
+//       { ok: false, error: err.message },
+//       { status: 500 }
+//     );
+//   }
+// }
 import { NextResponse } from "next/server";
 import { Client } from "@notionhq/client";
 
@@ -216,22 +298,71 @@ const notion = new Client({
 const getText = (rich: any[]) =>
   rich?.map((t) => t.plain_text).join("") || "";
 
-const mapBlock = (block: any) => {
+/* ---------------- MAP BLOCK (EXTENDED ONLY) ---------------- */
+const mapBlock = async (block: any) => {
   const type = block.type;
   const data = block[type];
   const out: any = { id: block.id, type };
 
-  if (data?.rich_text) {
+  // TEXT BASED BLOCKS (UNCHANGED)
+  if (
+    data?.rich_text &&
+    (
+      type === "paragraph" ||
+      type === "heading_1" ||
+      type === "heading_2" ||
+      type === "heading_3" ||
+      type === "bulleted_list_item" ||
+      type === "numbered_list_item"
+    )
+  ) {
     out.text = getText(data.rich_text);
+    return out;
+  }
+
+  // IMAGE
+  if (type === "image") {
+    out.url =
+      block.image.type === "external"
+        ? block.image.external.url
+        : block.image.file.url;
+    return out;
+  }
+
+  // EQUATION BLOCK
+  if (type === "equation") {
+    out.expression = block.equation.expression;
+    return out;
+  }
+
+  // CODE BLOCK
+  if (type === "code") {
+    out.code = getText(block.code.rich_text);
+    out.language = block.code.language;
+    return out;
+  }
+
+  // TABLE
+  if (type === "table") {
+    const rowsRes = await notion.blocks.children.list({
+      block_id: block.id,
+    });
+
+    out.rows = rowsRes.results.map((row: any) => ({
+      cells: row.table_row.cells.map((cell: any[]) =>
+        cell.map((t) => t.plain_text).join("")
+      ),
+    }));
+    return out;
   }
 
   return out;
 };
 
-// ✅ FETCH ALL BLOCKS (NO LIMIT)
+// ✅ FETCH ALL BLOCKS (UNCHANGED)
 async function fetchAllBlocks(blockId: string) {
   let allBlocks: any[] = [];
-  let cursor: string | undefined = undefined;
+  let cursor: string | undefined;
 
   while (true) {
     const res = await notion.blocks.children.list({
@@ -241,7 +372,6 @@ async function fetchAllBlocks(blockId: string) {
     });
 
     allBlocks.push(...res.results);
-
     if (!res.has_more) break;
     cursor = res.next_cursor ?? undefined;
   }
@@ -254,19 +384,14 @@ export async function GET(
   ctx: { params: Promise<{ unitId: string }> }
 ) {
   try {
-    // ✅ VERY IMPORTANT: unwrap params
     const { unitId } = await ctx.params;
-
-    if (!unitId) {
-      throw new Error("unitId missing in route params");
-    }
 
     const page: any = await notion.pages.retrieve({
       page_id: unitId,
     });
 
     const rawBlocks = await fetchAllBlocks(unitId);
-    const blocks = rawBlocks.map(mapBlock);
+    const blocks = await Promise.all(rawBlocks.map(mapBlock));
 
     return NextResponse.json({
       ok: true,

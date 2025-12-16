@@ -1,9 +1,23 @@
 import Image from "next/image";
-
+import Link from "next/link";
 export default function LearnMorePage() {
   return (
     <div className="min-h-screen   pb-20">
-
+      <Link
+        href="/"
+        className="
+          absolute top-10 left-4 sm:left-6
+          px-4 py-2 text-sm font-semibold
+          border-2 border-black dark:border-gray-300
+          rounded-md
+          shadow-[4px_4px_0_0_#000]
+          dark:shadow-[4px_4px_0_0_#374151]
+          hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]
+          transition 
+        "
+      >
+        ← Back
+      </Link>
       {/* HERO SECTION — NotesDeck Style */}
       <section className="px-6 md:px-20 py-24 text-center">
        
